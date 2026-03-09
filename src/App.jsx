@@ -177,6 +177,10 @@ export default function CLARA() {
         })
       });
       const data = await response.json();
+      if (!response.ok) {
+        const msg = data?.error?.message || data?.error || JSON.stringify(data);
+        throw new Error(`API ${response.status}: ${msg}`);
+      }
       const text = data.content?.[0]?.text || "";
       const clean = text.replace(/```json|```/g, "").trim();
       setOutputs(JSON.parse(clean));
