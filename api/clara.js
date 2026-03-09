@@ -5,11 +5,12 @@ export default async function handler(req, res) {
 
   try {
     let body = req.body;
-
-    // In non-Next.js Vercel functions, body may arrive as a raw string
     if (typeof body === "string") {
       body = JSON.parse(body);
     }
+
+    console.log("Request body keys:", body ? Object.keys(body) : "undefined/null");
+    console.log("API key present:", !!process.env.ANTHROPIC_API_KEY);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -22,8 +23,13 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+    console.log("Anthropic status:", response.status);
+    if (!response.ok) {
+      console.log("Anthropic error:", JSON.stringify(data));
+    }
     return res.status(response.status).json(data);
   } catch (err) {
+    console.log("Handler error:", err.message);
     return res.status(500).json({ error: err.message });
   }
 }
