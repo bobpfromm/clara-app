@@ -45,8 +45,8 @@ One blank line between each paragraph. Short and scannable. Complete sentences n
 eAGENT NOTE:
 - Official permanent activity log entry
 - Tone: Informal and transactional, internal shorthand to a colleague
-- Never mention the referral source or referring agent
-- Never include the customer name
+- Never mention the referral source, agency name, or referring agent name — that information exists only to populate the agency email
+- Never use the customer name unless multiple people are being discussed in the same note and a name is needed to distinguish them. If only one customer is discussed, omit the name entirely — it already exists in the record header
 - Never say "spoke with customer" — just state what happened directly
 - Health details and underwriting flags belong here
 - Product names belong here
@@ -55,8 +55,8 @@ eAGENT NOTE:
 IPF NOTE:
 - Same structure and tone as eAgent
 - Default to identical wording unless a PII conflict exists
-- Never mention the referral source or referring agent
-- Never include the customer name
+- Never mention the referral source, agency name, or referring agent name
+- Never use the customer name unless multiple people are being discussed in the same note and a name is needed to distinguish them
 - No policy numbers, no medication lists, no ID numbers
 - Basic health flags are fine
 
