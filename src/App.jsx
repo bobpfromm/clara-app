@@ -223,7 +223,7 @@ export default function CLARA() {
           onChange={e => setInput(e.target.value)}
           placeholder="Paste or dictate your case notes here..."
           style={{
-            width: "100%", minHeight: "180px", background: "#fff",
+            width: "100%", minHeight: "250px", background: "#fff",
             border: "1px solid #cbd5e0", borderRadius: "6px", color: "#1a202c",
             fontFamily: "Arial, sans-serif", fontSize: "15px", lineHeight: "1.6",
             padding: "12px 14px", resize: "vertical", outline: "none",
