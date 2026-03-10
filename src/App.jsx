@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const SYSTEM_PROMPT = `You are CLARA — Client Log And Response Assistant. You are an experienced investment and life insurance professional. You convert raw dictated case notes into clean outputs for four audiences.
 
-INPUT: Raw dictated notes about a customer interaction. May be rambling or disjointed. Self-corrections: the second statement always overrides the first. Never interpolate, infer, or fill gaps — if something is genuinely unclear and affects the output, add it to the clarifications list instead.
+INPUT: Raw dictated notes about a customer interaction. May be rambling or disjointed. Self-corrections: the second statement always overrides the first. Never interpolate, infer, or fill gaps — if something is genuinely unclear and the output literally cannot be completed without it, add it to the clarifications list.
 
 OUTPUT: Return ONLY a valid JSON object. No markdown, no backticks, no explanation. Exactly this structure:
 {
@@ -35,25 +35,28 @@ PRODUCT GLOSSARY — always spell exactly as shown:
 Lincoln Financial Group (LFG): TermAccel, LifeElements, WealthProtector
 
 NOTE STRUCTURE — applies to both eAgent and IPF:
-WHY: Customer's problem in plain human terms. No product language. What pain are they trying to solve?
-HOW: General solution category only. No product names.
-WHAT: Specific products quoted, numbers, underwriting flags, next steps.
+Write three flowing paragraphs in this order. No section labels. No headers. Just the paragraphs.
+First paragraph: The customer's problem in plain human terms. No product language. What pain are they trying to solve?
+Second paragraph: The general solution category being explored. No product names.
+Third paragraph: Specific products quoted, numbers, underwriting flags, next steps.
 
-Format: Short single-idea paragraphs. One blank line between each. Scannable. Complete sentences not required.
+One blank line between each paragraph. Short and scannable. Complete sentences not required.
 
 eAGENT NOTE:
 - Official permanent activity log entry
 - Tone: Informal and transactional, internal shorthand to a colleague
-- Never mention the referral source
+- Never mention the referral source or referring agent
+- Never include the customer name
 - Never say "spoke with customer" — just state what happened directly
-- No customer name needed
 - Health details and underwriting flags belong here
 - Product names belong here
 - If a secondary prospect was mentioned, note it
 
 IPF NOTE:
-- Same WHY/HOW/WHAT structure and tone as eAgent
+- Same structure and tone as eAgent
 - Default to identical wording unless a PII conflict exists
+- Never mention the referral source or referring agent
+- Never include the customer name
 - No policy numbers, no medication lists, no ID numbers
 - Basic health flags are fine
 
@@ -77,9 +80,11 @@ AGENCY EMAIL:
 - No closing line
 
 CLARIFICATIONS:
-- Fire only when something genuinely affects the output and cannot be completed without it
+- Fire ONLY if the output literally cannot be completed without the missing information
+- Example of a valid clarification: a referring agent is mentioned but their name was never given
+- Do NOT fire for: which family member a health condition belongs to (assume the primary customer), whether existing policy details should go in the email (always keep internal), vague family mentions that do not affect the quote
 - Do NOT fire for product names in customer-facing outputs — use solution language instead
-- Do NOT fire for minor details that do not change the output`;
+- Do NOT fire for minor details that do not change any output`;
 
 const OutputBlock = ({ label, content, emptyMessage }) => {
   const [copied, setCopied] = useState(false);
@@ -103,7 +108,7 @@ const OutputBlock = ({ label, content, emptyMessage }) => {
         )}
       </div>
       <div style={{
-        padding: "12px 14px", fontSize: "13px", lineHeight: "1.75",
+        padding: "12px 14px", fontSize: "15px", lineHeight: "1.75",
         color: isEmpty ? "#bbb" : "#1a202c", whiteSpace: "pre-wrap",
         background: "#fff", minHeight: "50px", fontFamily: "Georgia, serif"
       }}>{isEmpty ? (emptyMessage || "Not applicable") : content}</div>
@@ -143,11 +148,11 @@ const EmailBlock = ({ label, subject, body, emptyMessage }) => {
       {!isEmpty && (
         <div style={{ padding: "8px 14px", background: "#f7fafc", borderBottom: "1px solid #e2e8f0" }}>
           <span style={{ fontSize: "11px", fontWeight: "700", color: "#718096", marginRight: "8px" }}>SUBJECT:</span>
-          <span style={{ fontSize: "13px", color: "#2d3748" }}>{subject}</span>
+          <span style={{ fontSize: "15px", color: "#2d3748" }}>{subject}</span>
         </div>
       )}
       <div style={{
-        padding: "12px 14px", fontSize: "13px", lineHeight: "1.75",
+        padding: "12px 14px", fontSize: "15px", lineHeight: "1.75",
         color: isEmpty ? "#bbb" : "#1a202c", whiteSpace: "pre-wrap",
         background: "#fff", minHeight: "50px", fontFamily: "Georgia, serif"
       }}>{isEmpty ? (emptyMessage || "Not applicable") : body}</div>
@@ -199,7 +204,7 @@ export default function CLARA() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f8fa", fontFamily: "Arial, sans-serif", padding: "24px 20px", maxWidth: "800px", margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "#f7f8fa", fontFamily: "Arial, sans-serif", padding: "24px 40px" }}>
 
       {/* Header */}
       <div style={{ marginBottom: "24px", paddingBottom: "16px", borderBottom: "2px solid #2c5282" }}>
@@ -218,9 +223,9 @@ export default function CLARA() {
           onChange={e => setInput(e.target.value)}
           placeholder="Paste or dictate your case notes here..."
           style={{
-            width: "100%", minHeight: "130px", background: "#fff",
+            width: "100%", minHeight: "180px", background: "#fff",
             border: "1px solid #cbd5e0", borderRadius: "6px", color: "#1a202c",
-            fontFamily: "Arial, sans-serif", fontSize: "14px", lineHeight: "1.6",
+            fontFamily: "Arial, sans-serif", fontSize: "15px", lineHeight: "1.6",
             padding: "12px 14px", resize: "vertical", outline: "none",
             boxSizing: "border-box"
           }}
@@ -255,7 +260,7 @@ export default function CLARA() {
 
       {error && (
         <div style={{
-          color: "#c53030", fontSize: "13px", marginBottom: "16px",
+          color: "#c53030", fontSize: "15px", marginBottom: "16px",
           padding: "12px 14px", border: "1px solid #feb2b2",
           borderRadius: "6px", background: "#fff5f5"
         }}>{error}</div>
@@ -271,7 +276,7 @@ export default function CLARA() {
             }}>
               <div style={{ fontSize: "11px", fontWeight: "700", color: "#c05621", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "8px" }}>Clarification Needed</div>
               {outputs.clarifications.map((q, i) => (
-                <div key={i} style={{ fontSize: "13px", color: "#7b341e", lineHeight: "1.6", marginBottom: "4px" }}>{i + 1}. {q}</div>
+                <div key={i} style={{ fontSize: "15px", color: "#7b341e", lineHeight: "1.6", marginBottom: "4px" }}>{i + 1}. {q}</div>
               ))}
             </div>
           )}
@@ -295,7 +300,7 @@ export default function CLARA() {
               style={{
                 width: "100%", minHeight: "70px", background: "#fff",
                 border: "1px solid #cbd5e0", borderRadius: "6px", color: "#1a202c",
-                fontFamily: "Arial, sans-serif", fontSize: "14px", lineHeight: "1.6",
+                fontFamily: "Arial, sans-serif", fontSize: "15px", lineHeight: "1.6",
                 padding: "10px 14px", resize: "vertical", outline: "none",
                 boxSizing: "border-box", marginBottom: "10px"
               }}
