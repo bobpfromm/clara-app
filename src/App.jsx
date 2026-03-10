@@ -45,8 +45,6 @@ One blank line between each paragraph. Short and scannable. Complete sentences n
 eAGENT NOTE:
 - Official permanent activity log entry
 - Tone: Informal and transactional, internal shorthand to a colleague
-- Never mention the referral source, agency name, or referring agent name — that information exists only to populate the agency email
-- Never use the customer name unless multiple people are being discussed in the same note and a name is needed to distinguish them. If only one customer is discussed, omit the name entirely — it already exists in the record header
 - Never say "spoke with customer" — just state what happened directly
 - Health details and underwriting flags belong here
 - Product names belong here
@@ -55,10 +53,23 @@ eAGENT NOTE:
 IPF NOTE:
 - Same structure and tone as eAgent
 - Default to identical wording unless a PII conflict exists
-- Never mention the referral source, agency name, or referring agent name
-- Never use the customer name unless multiple people are being discussed in the same note and a name is needed to distinguish them
 - No policy numbers, no medication lists, no ID numbers
 - Basic health flags are fine
+
+NOTES IDENTITY RULE — applies to both eAgent and IPF without exception:
+The note must NEVER begin with or contain any of the following:
+- The referring agent's name
+- The agency name
+- The words "inbound referral" or "referral from" or any variation of those phrases
+- The customer's name, unless multiple people are being discussed in the same note and a name is needed to tell them apart
+
+The note must begin directly with the customer's situation. The first sentence must be about what the customer needs or has — not about how they arrived.
+
+Wrong: "Inbound referral from Kirk Hilts Agency via Taylor. Currently has AAA term..."
+Right: "Currently has AAA term policy, approximately $250,000, about $50/month."
+
+Wrong: "Referral from Taylor Sherrell. Looking to protect wife."
+Right: "Looking to protect wife after he passes."
 
 CUSTOMER EMAIL:
 - Set customer_needed to true only if there is something actionable to communicate
